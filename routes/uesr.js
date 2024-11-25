@@ -1,4 +1,4 @@
-// user.js - 회원 관련 라우트
+// routes/user.js
 const express = require('express');
 const router = express.Router();
 
@@ -9,4 +9,3 @@ router.post('/signup', (req, res) => {
 });
 
 module.exports = router;
-
