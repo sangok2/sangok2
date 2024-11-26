@@ -1,9 +1,12 @@
+-- 게시판 테이블 생성 쿼리
+
 CREATE TABLE posts (
-post_id INT AUTO_INCREMENT PRIMARY KEY,     -- 게시글 ID (자동 증가)
-title VARCHAR(100) NOT NULL,                 -- 게시글 제목
-content TEXT NOT NULL,                       -- 게시글 내용
-author_id INT,                               -- 작성자 (user_id와 연결)
-is_public BOOLEAN DEFAULT TRUE,              -- 게시글 공개 여부 (기본값은 TRUE)
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 작성 일시
-FOREIGN KEY (author_id) REFERENCES users(user_id) -- users 테이블과 연결
+    post_id INT AUTO_INCREMENT PRIMARY KEY,   -- 게시물 ID
+    title VARCHAR(255) NOT NULL,              -- 제목
+    content TEXT NOT NULL,                    -- 내용
+    author VARCHAR(50) NOT NULL,              -- 작성자
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 작성일
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
+    status VARCHAR(20) DEFAULT '공개',        -- 공개/비공개
+    FOREIGN KEY (author) REFERENCES users(user_id) -- 작성자와 회원 연결
 );
