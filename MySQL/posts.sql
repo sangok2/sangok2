@@ -8,5 +8,5 @@ CREATE TABLE posts (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 작성일
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 수정일
     status VARCHAR(20) DEFAULT '공개',        -- 공개/비공개
-    FOREIGN KEY (author) REFERENCES users(user_id) -- 작성자와 회원 연결
+    FOREIGN KEY (author) REFERENCES users(userId) -- 작성자와 회원 연결
 );
