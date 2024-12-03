@@ -1,7 +1,7 @@
 -- 게시판 테이블 생성 쿼리
 
 CREATE TABLE posts (
-    post_id INT AUTO_INCREMENT PRIMARY KEY,   -- 게시물 ID
+    postId INT AUTO_INCREMENT PRIMARY KEY,   -- 게시물 ID
     title VARCHAR(255) NOT NULL,              -- 제목
     content TEXT NOT NULL,                    -- 내용
     author VARCHAR(50) NOT NULL,              -- 작성자
