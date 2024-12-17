@@ -1,3 +1,4 @@
+package Main.JAVA;
 import java.util.Scanner;
 import java.io.File;
 
@@ -30,7 +31,8 @@ public class Main_post {
                     String keyword = scanner.nextLine();
                     System.out.print("검색 조건 (제목/내용/작성자/제목+내용/작성자+내용): ");
                     String condition = scanner.nextLine();
-                    postService.searchPosts(keyword, condition);
+                    String userIdForSearch = (UserService.getLoggedInUser() != null) ? UserService.getLoggedInUser().getUserId() : "guest";
+                    postService.searchPosts(keyword, condition, userIdForSearch);
                     break;
 
                 case 3: // 게시물 작성 (로그인 필요)
@@ -51,8 +53,7 @@ public class Main_post {
                         }
                     }
 
-                    Post newPost = new Post(0, title, content, UserService.getLoggedInUser().getUserId(), null, null, "공개", filePath.isEmpty() ? null : filePath);
-                    postService.createPost(newPost);
+                    postService.createPost(title, content, UserService.getLoggedInUser().getUserId(), "공개", filePath.isEmpty() ? null : filePath);
                     break;
 
                 case 4: // 게시물 수정 (로그인 필요)
@@ -61,25 +62,16 @@ public class Main_post {
                     int postIdToEdit = scanner.nextInt();
                     scanner.nextLine(); // 버퍼 정리
 
-                    Post postToEdit = postService.getPostById(postIdToEdit);
-                    if (postToEdit == null) {
-                        System.out.println("존재하지 않는 게시물입니다.");
-                        break;
-                    }
-
-                    // 권한 확인
-                    if (!postToEdit.getAuthor().equals(UserService.getLoggedInUser().getUserId())) {
-                        System.out.println("본인이 작성한 게시물만 수정할 수 있습니다.");
-                        break;
-                    }
-
                     System.out.print("새 제목: ");
                     String newTitle = scanner.nextLine();
                     System.out.print("새 내용: ");
                     String newContent = scanner.nextLine();
                     System.out.print("공개 여부 (공개/비공개): ");
                     String newStatus = scanner.nextLine();
-                    postService.updatePost(postIdToEdit, newTitle, newContent, newStatus);
+                    System.out.print("새 파일 경로 (선택, 없으면 Enter): ");
+                    String newFilePath = scanner.nextLine().trim();
+
+                    postService.updatePost(postIdToEdit, newTitle, newContent, newStatus, UserService.getLoggedInUser().getUserId(), newFilePath.isEmpty() ? null : newFilePath);
                     break;
 
                 case 5: // 게시물 삭제 (로그인 필요)
@@ -88,23 +80,16 @@ public class Main_post {
                     int postIdToDelete = scanner.nextInt();
                     scanner.nextLine(); // 버퍼 정리
 
-                    Post postToDelete = postService.getPostById(postIdToDelete);
-                    if (postToDelete == null) {
-                        System.out.println("존재하지 않는 게시물입니다.");
-                        break;
-                    }
-
-                    // 권한 확인
-                    if (!postToDelete.getAuthor().equals(UserService.getLoggedInUser().getUserId())) {
-                        System.out.println("본인이 작성한 게시물만 삭제할 수 있습니다.");
-                        break;
-                    }
-
                     postService.deletePost(postIdToDelete, UserService.getLoggedInUser().getUserId());
                     break;
 
                 case 6: // 로그아웃
-                    userService.logoutUser();
+                    if (UserService.getLoggedInUser() != null) {
+                        userService.logout();
+                        System.out.println("로그아웃되었습니다.");
+                    } else {
+                        System.out.println("로그인 상태가 아닙니다.");
+                    }
                     break;
 
                 case 0: // 종료
@@ -119,11 +104,11 @@ public class Main_post {
     }
 
     // 로그인 상태 확인 메서드
-private static boolean checkLogin(UserService userService) {
-    if (UserService.getLoggedInUser() == null) {
-        System.out.println("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
-        return userService.attemptLogin(); // 로그인 시도
+    private static boolean checkLogin(UserService userService) {
+        if (UserService.getLoggedInUser() == null) {
+            System.out.println("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+            return userService.attemptLogin(); // 로그인 시도
+        }
+        return true; // 이미 로그인되어 있음
     }
-    return true; // 이미 로그인되어 있음
-}
 }

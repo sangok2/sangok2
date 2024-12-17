@@ -1,3 +1,4 @@
+package Main.JAVA;
 public class Post {
     private int postId;         // 게시물 ID
     private String title;       // 제목
@@ -8,7 +9,7 @@ public class Post {
     private String status;      // 공개/비공개 상태
     private String filePath;    // 파일 경로 (선택적)
 
-    // 생성자 (게시물 등록 시 사용)
+    // 게시물 등록 시 사용하는 생성자
     public Post(String title, String content, String author, String status, String filePath) {
         this.title = title;
         this.content = content;
@@ -17,7 +18,7 @@ public class Post {
         this.filePath = filePath;
     }
 
-    // 생성자 (DB에서 데이터를 가져올 때 사용)
+    // DB에서 데이터를 가져올 때 사용하는 생성자
     public Post(int postId, String title, String content, String author, 
                 String createdAt, String updatedAt, String status, String filePath) {
         this.postId = postId;

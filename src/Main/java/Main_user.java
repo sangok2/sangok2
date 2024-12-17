@@ -1,5 +1,9 @@
+package Main.JAVA;
+import java.sql.*;
 import java.util.Scanner;
+import java.io.File;
 
+// Main_user.java
 public class Main_user {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -8,13 +12,13 @@ public class Main_user {
         System.out.println("회원가입을 진행합니다.");
 
         System.out.print("사용자 아이디: ");
-        String userId = scanner.nextLine();  // 사용자 아이디 입력 받기
+        String userId = scanner.nextLine();
 
         System.out.print("비밀번호: ");
-        String password = scanner.nextLine();  // 비밀번호 입력 받기
+        String password = scanner.nextLine();
 
         System.out.print("비밀번호 확인: ");
-        String confirmPassword = scanner.nextLine();  // 비밀번호 확인 입력 받기
+        String confirmPassword = scanner.nextLine();
 
         // 비밀번호 확인
         if (!password.equals(confirmPassword)) {
@@ -37,15 +41,15 @@ public class Main_user {
         // User 객체 생성
         User newUser = new User(userId, password, name, phone, address, ssn);
 
-         // UserService 객체를 생성하여 회원가입 실행
-         UserService userService = new UserService();
+        // UserService 객체를 생성하여 회원가입 실행
+        UserService userService = new UserService();
 
-         // 회원가입 결과 출력
-         boolean isRegistered = userService.registerUser(newUser); // 회원가입
-         if (isRegistered) {
-             System.out.println("회원가입이 성공적으로 완료되었습니다!");
-         } else {
-             System.out.println("회원가입에 실패했습니다.");
-         }
-     }
- }
+        // 회원가입 결과 출력
+        boolean isRegistered = userService.registerUser(newUser); // 회원가입
+        if (isRegistered) {
+            System.out.println("회원가입이 성공적으로 완료되었습니다!");
+        } else {
+            System.out.println("회원가입에 실패했습니다.");
+        }
+    }
+}

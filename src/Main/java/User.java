@@ -1,3 +1,5 @@
+package Main.java;
+
 public class User { 
     private String userId;    // 사용자 ID
     private String password;  // 비밀번호
@@ -6,7 +8,7 @@ public class User {
     private String address;   // 주소
     private String ssn;       // 주민등록번호
 
-    // 생성자
+    // User 객체를 초기화하는 생성자
     public User(String userId, String password, String name, 
                 String phone, String address, String ssn) {
         this.userId = userId;      // 사용자 ID
@@ -17,7 +19,7 @@ public class User {
         this.ssn = ssn;            // 주민번호
     }
 
-    // Getter(객체 속성값 읽기)와 Setter(객체 속성값 수정)
+    // Getter(객체 속성값 읽기)와 Setter(객체 속성값 수정) = 이 메서드를 통해 사용자 정보를 접근/수정 가능
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
