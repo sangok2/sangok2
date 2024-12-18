@@ -31,14 +31,14 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
-    <!-- board Servlet 매핑 -->
+    <!-- Post Servlet 매핑 -->
     <servlet>
-        <servlet-name>BoardServlet</servlet-name>
-        <servlet-class>Main.java.servlet.BoardServlet</servlet-class>
+        <servlet-name>PostServlet</servlet-name>
+        <servlet-class>Main.java.servlet.PostServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>BoardServlet</servlet-name>
-        <url-pattern>/board</url-pattern>
+        <servlet-name>PostServlet</servlet-name>
+        <url-pattern>/post</url-pattern>
     </servlet-mapping>
 
 </web-app>

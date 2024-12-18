@@ -24,7 +24,7 @@ public class Main_post {
 
             switch (choice) {
                 case 1: // 게시물 목록 조회
-                    postService.viewAllPosts();
+                    postService.getAllPosts();
                     break;
 
                 case 2: // 게시물 검색

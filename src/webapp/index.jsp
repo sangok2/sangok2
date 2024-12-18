@@ -31,13 +31,13 @@
                 <!-- 미로그인 상태 -->
                 <li><a href="register.html">회원가입</a></li>
                 <li><a href="login.jsp">로그인</a></li>
-                <li><a href="board.jsp">게시판</a></li>
+                <li><a href="post.jsp">게시판</a></li>
             <%
                 } else {
             %>
                 <!-- 로그인 상태 -->
                 <li><a href="logout">로그아웃</a></li>
-                <li><a href="board.jsp">게시판</a></li>
+                <li><a href="post.jsp">게시판</a></li>
             <%
                 }
             %>
