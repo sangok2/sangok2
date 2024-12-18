@@ -38,6 +38,10 @@
             } else { // 미로그인 사용자
         %>
             <p>로그인하면 게시물을 작성할 수 있습니다.</p>
+            <p>로그인하고 싶으면 버튼을 클릭하세요.</p>
+            <form action="login.jsp" method="get">
+                <button type="submit">로그인 페이지로 이동</button>
+            </form>
         <%
             }
         %>
@@ -92,7 +96,7 @@
                             <td>${post.author}</td>
                             <td>${post.createdAt}</td>
                             <td>${post.status}</td>
-                            ${actionButtons ? `<td>${actionButtons}</td>` : ""}
+                            ${actionButtons != null ? '<td>' .concat(actionButtons).concat('</td>') : ''}
                         `;
                         tableBody.appendChild(row);
                     });

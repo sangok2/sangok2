@@ -1,4 +1,5 @@
-package Main.JAVA;
+package Main.java.service;
+
 import java.sql.*;
 
 public class PostService {

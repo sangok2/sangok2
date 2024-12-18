@@ -1,4 +1,4 @@
-package Main.java;
+package Main.java.service;
 
 import java.sql.*;
 import java.util.Scanner;
@@ -42,8 +42,8 @@ public class UserService {
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             String sql = "SELECT * FROM users WHERE userId = ? AND password = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, userId);
-            pstmt.setString(2, password);
+            pstmt.setString(1, userId.trim());
+            pstmt.setString(2, password.trim());
 
             rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -162,14 +162,23 @@ public class UserService {
         ResultSet rs = null;
 
         try {
+            // 공백 제거한 입력값 로그 출력(디버그 내용 보기)
+            System.out.println("로그인 시도: userId=" + userId + ", password=" + password.trim());
+    
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             String sql = "SELECT * FROM users WHERE userId = ? AND password = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, userId);
-            pstmt.setString(2, password);
-
+            pstmt.setString(1, userId.trim()); // 공백 제거
+            pstmt.setString(2, password.trim()); // 공백 제거
+    
+            // SQL 실행 전 로그 출력
+            System.out.println("SQL 실행: " + sql + " (userId=" + userId + ", password=" + password.trim() + ")");
+    
             rs = pstmt.executeQuery();
+            
+            // 결과 확인
             if (rs.next()) {
+                System.out.println("로그인 성공: userId=" + rs.getString("userId")); // 로그 출력
                 loggedInUser = new User(
                     rs.getString("userId"),
                     rs.getString("password"),
@@ -180,6 +189,7 @@ public class UserService {
                 );
                 return true; // 로그인 성공
             } else {
+                System.out.println("로그인 실패: 입력값과 DB 값이 일치하지 않습니다.");
                 return false; // 로그인 실패
             }
         } catch (SQLException e) {

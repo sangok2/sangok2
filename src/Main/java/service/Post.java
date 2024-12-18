@@ -1,4 +1,5 @@
-package Main.JAVA;
+package Main.java.service;
+
 public class Post {
     private int postId;         // 게시물 ID
     private String title;       // 제목

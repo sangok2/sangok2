@@ -1,4 +1,4 @@
-package Main.java;
+package Main.java.service;
 
 public class User { 
     private String userId;    // 사용자 ID

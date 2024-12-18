@@ -2,7 +2,7 @@
 <%@ page import="javax.servlet.http.HttpSession" %>
 
 <%
-    //세션에서 로그인된 사용자 확인
+    // 세션에서 로그인된 사용자 확인
     HttpSession sessionObj = request.getSession(false);
     String userId = (sessionObj != null) ? (String) sessionObj.getAttribute("userId") : null;
 %>
@@ -12,36 +12,16 @@
 <head>
     <meta charset="UTF-8">
     <title>메인 페이지</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
-            text-align: center;
-        }
-        h1 { 
-            color: #333; 
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-        nav ul li {
-            margin: 0 15px;
-        }
-        nav ul li a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-        }
-        nav ul li a:hover {
-            color: #0056b3;
-        }
-    </style>
 </head>
 <body>
     <h1>Welcome to the OKsite</h1>
+
+    <!-- userId 확인 로그 출력
+    <%
+        System.out.println("index.jsp에서 세션 userId: " + userId);
+    %>
+    <p>세션에 저장된 userId: <strong><%= (userId != null) ? userId : "세션에 userId 없음" %></strong></p>
+    -->
 
     <nav>
         <ul>
@@ -73,7 +53,7 @@
         } else {
     %>
         <!-- 미로그인 상태 안내 -->
-        <p>사이트의 게시판을 조회할 수 있지만, 게시물을 작성하시려면 <a href="login.jsp">로그인</a> 또는 <a href="register.html">회원가입</a>을 해주세요.</p>
+        <p>로그인 또는 회원가입 후 더 많은 기능을 이용할 수 있습니다.</p>
     <%
         }
     %>

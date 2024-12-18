@@ -1,16 +1,16 @@
 
-package Main.JAVA.servlet;
+package Main.java.servlet;
 
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import PostService;
-import Post;
 
-@WebServlet("/board")
-public class PostServlet extends HttpServlet {
+import Main.java.service.Post;
+import Main.java.service.PostService;
+
+public class BoardServlet extends HttpServlet {
     private PostService postService = new PostService();
 
     // GET 요청: 게시물 목록 조회
@@ -19,7 +19,7 @@ public class PostServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("list".equals(action)) { // 게시물 목록 조회
-            List<Post> posts = postService.getAllPosts();
+            List<Post> posts = postService.viewAllPosts();
             request.setAttribute("posts", posts);
             request.getRequestDispatcher("post.jsp").forward(request, response);
         } else {
