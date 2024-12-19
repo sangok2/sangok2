@@ -17,7 +17,7 @@
 <body>
     <h2>게시물 작성</h2>
 
-    <form action="<%= request.getContextPath() %>/post" method="post" enctype="multipart/form-data">
+    <form action="<%= request.getContextPath() %>/post?action=create" method="post" enctype="multipart/form-data">
         <!-- 제목 입력 -->
         <label for="title">제목</label>
         <input type="text" id="title" name="title" required>

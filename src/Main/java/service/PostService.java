@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostService {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/ok_project"; // DB URL
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/ok_project?useUnicode=true&characterEncoding=UTF-8"; // DB URL
     private static final String DB_USER = "root"; // DB 사용자 이름
     private static final String DB_PASSWORD = "secureok"; // DB 비밀번호
 

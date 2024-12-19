@@ -35,7 +35,7 @@ public class PostServlet extends HttpServlet {
         out.flush();
     }
 
-    // 게시물 작성 및 수정 처리
+    // POST 요청 처리
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -46,11 +46,6 @@ public class PostServlet extends HttpServlet {
                 ? (String) session.getAttribute("userId")
                 : null;
 
-        if (action == null) {
-            response.sendRedirect(request.getContextPath() + "/error.jsp");
-            return;
-        }
-
         try {
             if ("create".equals(action)) {
                 handleCreatePost(request, userId, response);
@@ -59,7 +54,7 @@ public class PostServlet extends HttpServlet {
             } else if ("delete".equals(action)) {
                 handleDeletePost(request, userId, response);
             } else {
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 요청입니다.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,8 +91,10 @@ public class PostServlet extends HttpServlet {
                 }
             }
 
+            // 게시물 저장
             Post post = new Post(title, content, userId, status, filePath);
             postService.createPost(title, content, userId, status, filePath);
+            // 게시물 저장 완료 후 리다이렉트
             response.sendRedirect(request.getContextPath() + "/post.jsp");
         }
     }
@@ -110,12 +107,14 @@ public class PostServlet extends HttpServlet {
         String content = request.getParameter("content");
         String status = request.getParameter("status");
         String filePath = request.getParameter("filePath");
-
+        
+        // 미로그인 시 로그인페이지로 리다이렉트
         if (userId == null) {
             response.sendRedirect("login.jsp");
             return;
         }
-
+        
+        // 수정 완료 후 게시물페이지로 리다이렉트
         postService.updatePost(postId, title, content, status, userId, filePath);
         response.sendRedirect(request.getContextPath() + "/post.jsp");
     }
@@ -124,12 +123,14 @@ public class PostServlet extends HttpServlet {
     private void handleDeletePost(HttpServletRequest request, String userId, HttpServletResponse response)
             throws Exception {
         int postId = Integer.parseInt(request.getParameter("postId"));
-
+        
+        // 미로그인 시 로그인페이지로 리다이렉트
         if (userId == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
+        // 삭제 완료 후 게시물페이지로 리다이렉트
         postService.deletePost(postId, userId);
         response.sendRedirect(request.getContextPath() + "/post.jsp");
     }

@@ -23,6 +23,12 @@
         .action-buttons { margin-top: 10px; text-align: center; }
         button { padding: 8px 12px; margin: 5px; border: none; background-color: #007bff; color: white; cursor: pointer; border-radius: 4px; }
         button:hover { background-color: #0056b3; }
+        td {
+            color: black !important;
+            visibility: visible !important;
+            display: table-cell !important;
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body>
@@ -59,45 +65,51 @@
             </tr>
         </thead>
         <tbody id="postList">
-            <!-- 게시물 데이터를 불러오는 JavaScript -->
+            
+        </tbody>
+    </table>
+
+    <!-- 게시물 데이터를 불러오는 JavaScript -->
     <script>
     document.addEventListener("DOMContentLoaded", function () {
-        fetch('<%= request.getContextPath() %>/post?action=list')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("서버 오류 발생: " + response.status);
+    fetch('<%= request.getContextPath() %>/post?action=list')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("서버 오류 발생: " + response.status);
             }
-        return response.json();
+            return response.json();
         })
-    .then(data => {
-        const tableBody = document.getElementById("postList");
-        tableBody.innerHTML = ""; // 기존 내용 초기화
+        .then(data => {
+            console.log("응답 데이터:", data); // JSON 데이터를 확인
+            const tableBody = document.getElementById("postList");
+            console.log("tableBody:", tableBody); // DOM 선택 확인
+            tableBody.innerHTML = ""; // 기존 내용 초기화
 
-        if (data.length === 0) {
-            tableBody.innerHTML = "<tr><td colspan='6'>게시물이 없습니다.</td></tr>";
-            return;
-        }
+            if (data.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='5'>게시물이 없습니다.</td></tr>";
+                return;
+            }
 
-        data.forEach((post, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${post.title}</td>
-                <td>${post.author}</td>
-                <td>${post.createdAt}</td>
-                <td>${post.status}</td>
-            `;
-            tableBody.appendChild(row);
+            // 데이터 DOM에 추가
+            data.forEach((post, index) => {
+                console.log("게시물 데이터:", post); // 게시물 데이터 확인
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${post.title}</td>
+                    <td>${post.author}</td>
+                    <td>${post.createdAt}</td>
+                    <td>${post.status}</td>
+                `;
+                tableBody.appendChild(row);
             });
         })
-    .catch(error => {
-        console.error("게시물을 불러오는 중 오류 발생:", error);
-        const tableBody = document.getElementById("postList");
-        tableBody.innerHTML = "<tr><td colspan='6'>데이터를 불러올 수 없습니다.</td></tr>";
+        .catch(error => {
+            console.error("게시물을 불러오는 중 오류 발생:", error);
+            const tableBody = document.getElementById("postList");
+            tableBody.innerHTML = "<tr><td colspan='5'>데이터를 불러올 수 없습니다.</td></tr>";
         });
     });
     </script>
-        </tbody>
-    </table>
 </body>
 </html>
