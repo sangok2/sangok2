@@ -45,4 +45,14 @@
         <url-pattern>/post</url-pattern>
     </servlet-mapping>
 
+    <!-- Comment Servlet 매핑 -->
+    <servlet>
+        <servlet-name>CommentServlet</servlet-name>
+        <servlet-class>Main.java.servlet.CommentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CommentServlet</servlet-name>
+        <url-pattern>/comment</url-pattern>
+    </servlet-mapping>
+
 </web-app>
