@@ -56,9 +56,11 @@ public class PostServlet extends HttpServlet {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    response.sendRedirect(request.getContextPath() + "/error.jsp");
+                    response.sendRedirect(request.getContextPath() + "/post.jsp");
                 }
     }
+
+    // 게시물 조회
     private void handleListPosts(HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -78,9 +80,26 @@ public class PostServlet extends HttpServlet {
         String title = null, content = null, status = "공개";
         String filePath = null;
 
-        if (ServletFileUpload.isMultipartContent(request)) {
-            List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+        if (!ServletFileUpload.isMultipartContent(request)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "폼 데이터가 멀티파트 형식이 아닙니다.");
+            return;
+        }
 
+        // 메모리 임계값 설정 (기본: 10KB)
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        factory.setSizeThreshold(1024 * 1024); // 1MB 제한
+        // 임시 파일 저장 디렉토리 설정
+        factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
+        // 전체 요청 크기 제한 설정
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        upload.setSizeMax(10 * 1024 * 1024); // 10MB 제한
+
+        List<FileItem> items = upload.parseRequest(request);
+
+        String uploadPath = "C:/Users/이상옥/apache-tomcat-9.0.98/webapps/OKsite/uploads"; // 업로드 경로
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) uploadDir.mkdir();
+        
             for (FileItem item : items) {
                 if (item.isFormField()) {
                     switch (item.getFieldName()) {
@@ -90,15 +109,18 @@ public class PostServlet extends HttpServlet {
                     }
                 } else {
                     if (!item.getName().isEmpty()) {
-                        String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";
-                        File uploadDir = new File(uploadPath);
-                        if (!uploadDir.exists()) uploadDir.mkdir();
-
-                        String fileName = new File(item.getName()).getName();
+                        String fileName = System.currentTimeMillis() + "_" + new File(item.getName()).getName();
                         filePath = uploadPath + File.separator + fileName;
-                        item.write(new File(filePath));
+                        File storeFile = new File(filePath);
+                        item.write(storeFile);
+                        System.out.println("파일 업로드 성공: " + filePath);
                     }
                 }
+            }
+            // 필수 필드 확인
+            if (title == null || content == null || userId == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "필수 필드가 누락되었습니다.");
+                return;
             }
 
             // 게시물 저장
@@ -107,7 +129,7 @@ public class PostServlet extends HttpServlet {
             // 게시물 저장 완료 후 리다이렉트
             response.sendRedirect(request.getContextPath() + "/post.jsp");
         }
-    }
+    
 
     // 게시물 수정
     private void handleUpdatePost(HttpServletRequest request, String userId, HttpServletResponse response)
@@ -133,7 +155,7 @@ public class PostServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/post.jsp"); // 수정 완료 후 게시판으로 이동
         } catch (Exception e) {
             e.printStackTrace(); // 에러 로그 출력
-            response.sendRedirect(request.getContextPath() + "/error.jsp"); // 에러 발생 시 에러 페이지로 이동
+            response.sendRedirect(request.getContextPath() + "/post.jsp"); // 에러 발생 시 에러 페이지로 이동
         }
     }
 
@@ -174,3 +196,4 @@ public class PostServlet extends HttpServlet {
         out.flush();
     }
 }
+

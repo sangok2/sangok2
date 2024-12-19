@@ -67,8 +67,32 @@
             <label>작성일:</label>
             <p><%= post.getCreatedAt() %></p>
 
+            <label>수정일:</label>
+            <p><%= post.getUpdatedAt() %></p>
+
             <label>상태:</label>
             <p><%= post.getStatus() %></p>
+        
+            <%
+            // 게시물의 첨부파일 경로
+            String filePath = post.getFilePath();
+            %>
+
+            <div class="info">
+                <label>첨부파일:</label>
+                <%
+                    if (filePath != null && !filePath.trim().isEmpty()) {
+                %>
+                <a href="<%= request.getContextPath() %>/download?postId=<%= post.getPostId() %>">
+                첨부파일 다운로드</a>
+            <%
+            } else {
+            %>
+            <p>첨부파일이 없습니다.</p>
+            <%
+            }
+        %>
+            
         </div>
         <div class="actions">
             <button onclick="location.href='update_post.jsp?postId=<%= post.getPostId() %>'">수정</button>

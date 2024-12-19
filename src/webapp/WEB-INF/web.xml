@@ -55,4 +55,14 @@
         <url-pattern>/CommentServlet</url-pattern>
     </servlet-mapping>
 
+    <!-- Download Servlet 매핑 -->
+    <servlet>
+        <servlet-name>DownloadServlet</servlet-name>
+        <servlet-class>Main.java.servlet.DownloadServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DownloadServlet</servlet-name>
+        <url-pattern>/download</url-pattern>
+    </servlet-mapping>
+
 </web-app>

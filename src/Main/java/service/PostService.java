@@ -83,14 +83,16 @@ public class PostService {
     //게시물 등록 메서드(createPost)
     public void createPost(String title, String content, String author, String status, String filePath) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            // 파일 경로 유효성 검사
             if (filePath != null && !filePath.isEmpty()) {
                 String lowerPath = filePath.toLowerCase();
-                if (!(lowerPath.endsWith(".txt") || lowerPath.endsWith(".jpg") || lowerPath.endsWith(".jsp"))) {
+                if (!(lowerPath.endsWith(".txt") || lowerPath.endsWith(".jpg") || lowerPath.endsWith(".png") || lowerPath.endsWith(".jsp"))) {
                     System.out.println("유효하지 않은 파일 확장자입니다. 파일 경로가 저장되지 않습니다.");
                     filePath = null;
                 }
             }
 
+            // SQL 쿼리 준비
             String sql = "INSERT INTO posts (title, content, author, status, file_path) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, title);
@@ -98,7 +100,7 @@ public class PostService {
                 pstmt.setString(3, author);
                 pstmt.setString(4, status);
                 pstmt.setString(5, filePath);
-
+                // SQL 실행
                 int rows = pstmt.executeUpdate();
                 if (rows > 0) {
                     System.out.println("게시물이 성공적으로 등록되었습니다.");
@@ -281,5 +283,24 @@ public class PostService {
         e.printStackTrace();
     }
     return posts;
+    }
+
+    // 특정 게시물의 파일 경로 가져오기
+    public String getFilePathByPostId(int postId) {
+        String sql = "SELECT file_path FROM posts WHERE post_id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, postId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String filePath = rs.getString("file_path");
+                    System.out.println("DB file_path: " + filePath); // 디버깅용 로그
+                    return filePath;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
