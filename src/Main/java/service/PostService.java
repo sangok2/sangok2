@@ -9,6 +9,52 @@ public class PostService {
     private static final String DB_USER = "root"; // DB 사용자 이름
     private static final String DB_PASSWORD = "secureok"; // DB 비밀번호
 
+
+    // 게시물 작성자 가져오기 메서드
+    public String getPostAuthor(int postId) {
+    String author = null;
+    String query = "SELECT author FROM posts WHERE post_id = ?";
+    try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        pstmt.setInt(1, postId);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                author = rs.getString("author"); // 작성자 정보 가져오기
+            }
+        }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    return author; // 작성자가 없으면 null 반환
+    }
+
+    public Post getPostById(int postId) {
+        Post post = null;
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM posts WHERE post_id = ?")) {
+            
+            pstmt.setInt(1, postId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    post = new Post(
+                        rs.getInt("post_id"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("author"),
+                        rs.getString("created_at"),
+                        rs.getString("updated_at"),
+                        rs.getString("status"),
+                        rs.getString("file_path")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return post;
+    }
+    
     // 게시물 목록 반환 메서드(getAllPost)
     public List<Post> getAllPosts() {
         List<Post> posts = new ArrayList<>();

@@ -102,6 +102,8 @@ public class PostServlet extends HttpServlet {
     // 게시물 수정
     private void handleUpdatePost(HttpServletRequest request, String userId, HttpServletResponse response)
             throws Exception {
+        
+        // 요청 파라미터 받아오기
         int postId = Integer.parseInt(request.getParameter("postId"));
         String title = request.getParameter("title");
         String content = request.getParameter("content");
@@ -115,8 +117,14 @@ public class PostServlet extends HttpServlet {
         }
         
         // 수정 완료 후 게시물페이지로 리다이렉트
-        postService.updatePost(postId, title, content, status, userId, filePath);
-        response.sendRedirect(request.getContextPath() + "/post.jsp");
+        try {
+            postService.updatePost(postId, title, content, status, userId, filePath);
+            System.out.println("게시물 수정 성공: postId=" + postId);
+            response.sendRedirect(request.getContextPath() + "/post.jsp"); // 수정 완료 후 게시판으로 이동
+        } catch (Exception e) {
+            e.printStackTrace(); // 에러 로그 출력
+            response.sendRedirect(request.getContextPath() + "/error.jsp"); // 에러 발생 시 에러 페이지로 이동
+        }
     }
 
     // 게시물 삭제

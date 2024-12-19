@@ -3,7 +3,7 @@
 
 <%
     // 세션에서 로그인된 사용자 확인
-    HttpSession sessionObj = request.getSession(false);
+    HttpSession sessionObj = request.getSession(false); // 세션 객체를 가져옴
     String userId = (sessionObj != null) ? (String) sessionObj.getAttribute("userId") : null;
 %>
 
@@ -39,6 +39,7 @@
         <%
             if (userId != null) { // 로그인된 사용자
         %>
+            <button onclick="location.href='<%= request.getContextPath() %>/index.jsp'">메인홈</button>
             <button onclick="location.href='create_post.jsp'">게시물 작성</button>
         <%
             } else { // 미로그인 사용자
@@ -91,18 +92,18 @@
             }
 
             // 데이터 DOM에 추가
-            data.forEach((post, index) => {
-                console.log("게시물 데이터:", post); // 게시물 데이터 확인
+            for( var i = 0 ; i < data.length ; i ++ ){
+            console.log( data[i].title); // 데이터 확인용
+    
                 const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${post.title}</td>
-                    <td>${post.author}</td>
-                    <td>${post.createdAt}</td>
-                    <td>${post.status}</td>
-                `;
-                tableBody.appendChild(row);
-            });
+                row.innerHTML +=  '<td>' + (i + 1)  + '</td>';
+                row.innerHTML +=  '<td><a href="view_post.jsp?postId=' + data[i].postId + '">' + data[i].title + '</a></td>';
+                row.innerHTML +=  '<td>' + data[i].author + '</td>';
+                row.innerHTML +=  '<td>' + data[i].createdAt + '</td>';
+                row.innerHTML +=  '<td>' + data[i].status + '</td>';
+
+            tableBody.appendChild(row);
+            }
         })
         .catch(error => {
             console.error("게시물을 불러오는 중 오류 발생:", error);
