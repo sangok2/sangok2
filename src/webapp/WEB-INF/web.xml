@@ -52,7 +52,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CommentServlet</servlet-name>
-        <url-pattern>/comment</url-pattern>
+        <url-pattern>/CommentServlet</url-pattern>
     </servlet-mapping>
 
 </web-app>

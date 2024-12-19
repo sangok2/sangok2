@@ -87,8 +87,30 @@
                     <label>작성자:</label> <%= comment.getAuthor() %><br>
                     <label>내용:</label> <%= comment.getContent() %><br>
                     <label>작성일:</label> <%= comment.getCreatedAt() %>
-                </div>
-            <%
+                    
+                <!-- 댓글 수정/삭제 버튼 (작성자 본인만 표시) -->
+                <%
+                    if (userId != null && userId.equals(comment.getAuthor())) {
+                %>
+                    <div class="actions">
+                        <form action="<%= request.getContextPath() %>/CommentServlet" method="post" style="display:inline;">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="commentId" value="<%= comment.getCommentId() %>">
+                            <textarea name="content" placeholder="수정할 댓글 내용 입력" required></textarea>
+                            <button type="submit">수정</button>
+                        </form>
+                        <form action="<%= request.getContextPath() %>/CommentServlet" method="post" style="display:inline;">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="commentId" value="<%= comment.getCommentId() %>">
+                            <input type="hidden" name="postId" value="<%= postId %>">
+                            <button type="submit">삭제</button>
+                        </form>
+                    </div>
+                <%
+                    }
+                %>
+        </div>
+        <%
                     }
                 } else {
             %>
@@ -105,7 +127,7 @@
         %>
             <div class="comment-form">
                 <h3>댓글 작성</h3>
-                <form action="<%= request.getContextPath() %>/comment" method="post">
+                <form action="<%= request.getContextPath() %>/CommentServlet" method="post">
                     <input type="hidden" name="action" value="create">
                     <input type="hidden" name="postId" value="<%= postId %>">
                     <textarea name="content" placeholder="댓글 내용을 입력하세요..." required></textarea>
