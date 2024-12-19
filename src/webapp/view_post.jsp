@@ -1,10 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="Main.java.service.PostService" %>
 <%@ page import="Main.java.service.Post" %>
+<%@ page import="javax.servlet.http.HttpSession" %>
 <%
+    // 세션에서 로그인된 사용자 확인
+    HttpSession sessionObj = request.getSession(false);
+    String userId = (sessionObj != null) ? (String) sessionObj.getAttribute("userId") : null;
+
     int postId = Integer.parseInt(request.getParameter("postId")); // 전달받은 게시물 ID
     PostService postService = new PostService();
     Post post = postService.getPostById(postId); // 특정 게시물 정보를 가져오는 메서드
+
+    // 비공개 게시물 접근 제한
+    if ("비공개".equals(post.getStatus()) && (userId == null || !userId.equals(post.getAuthor()))) {
+%>
+    <script>
+        alert("접근 권한이 없습니다.");
+        location.href = "post.jsp";
+    </script>
+<%
+        return;
+    }
 %>
 
 <!DOCTYPE html>

@@ -202,10 +202,10 @@ public class PostService {
     // 게시물 검색(searchPosts)
     public List<Post> searchPosts(String keyword, String condition, String userId) {
         List<Post> posts = new ArrayList<>();
-        String sql = "SELECT * FROM posts WHERE ";
+        String sql = "SELECT * FROM posts WHERE "; 
 
-            // 검색 조건에 따른 SQL 쿼리
-            // 검색 조건 설정
+    // 검색 조건에 따른 SQL 쿼리        
+    // 검색 조건 설정
     switch (condition) {
         case "제목":
             sql += "title LIKE ?";

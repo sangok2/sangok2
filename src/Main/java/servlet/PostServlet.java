@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import java.sql.*;
 
 import Main.java.service.Post;
 import Main.java.service.PostService;
@@ -23,16 +22,13 @@ public class PostServlet extends HttpServlet {
     // 게시물 목록 반환
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action");
 
-        List<Post> posts = postService.getAllPosts();
-        Gson gson = new Gson();
-        String jsonData = gson.toJson(posts);
-
-        PrintWriter out = response.getWriter();
-        out.print(jsonData);
-        out.flush();
+        if ("list".equals(action)) {
+            handleListPosts(response);
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 요청입니다.");
+        }
     }
 
     // POST 요청 처리
@@ -46,20 +42,34 @@ public class PostServlet extends HttpServlet {
                 ? (String) session.getAttribute("userId")
                 : null;
 
-        try {
-            if ("create".equals(action)) {
-                handleCreatePost(request, userId, response);
-            } else if ("update".equals(action)) {
-                handleUpdatePost(request, userId, response);
-            } else if ("delete".equals(action)) {
-                handleDeletePost(request, userId, response);
-            } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 요청입니다.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/error.jsp");
-        }
+                try {
+                    if ("create".equals(action)) {
+                        handleCreatePost(request, userId, response);
+                    } else if ("update".equals(action)) {
+                        handleUpdatePost(request, userId, response);
+                    } else if ("delete".equals(action)) {
+                        handleDeletePost(request, userId, response);
+                    } else if ("search".equals(action)) {
+                        handleSearchPosts(request, response);
+                    } else {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 요청입니다.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.sendRedirect(request.getContextPath() + "/error.jsp");
+                }
+    }
+    private void handleListPosts(HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        List<Post> posts = postService.getAllPosts();
+        Gson gson = new Gson();
+        String jsonData = gson.toJson(posts);
+
+        PrintWriter out = response.getWriter();
+        out.print(jsonData);
+        out.flush();
     }
 
     // 게시물 작성
@@ -141,5 +151,26 @@ public class PostServlet extends HttpServlet {
         // 삭제 완료 후 게시물페이지로 리다이렉트
         postService.deletePost(postId, userId);
         response.sendRedirect(request.getContextPath() + "/post.jsp");
+    }
+
+    // 게시물 검색 처리 메서드
+    private void handleSearchPosts(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String keyword = request.getParameter("keyword");
+        String condition = request.getParameter("condition");
+        HttpSession session = request.getSession(false);
+        String userId = (session != null) ? (String) session.getAttribute("userId") : null;
+
+        List<Post> posts = postService.searchPosts(keyword, condition, userId);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        Gson gson = new Gson();
+        String jsonData = gson.toJson(posts);
+
+        PrintWriter out = response.getWriter();
+        out.print(jsonData);
+        out.flush();
     }
 }
