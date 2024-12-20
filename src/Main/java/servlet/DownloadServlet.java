@@ -1,3 +1,5 @@
+package Main.java.servlet;
+
 import Main.java.service.Post;
 import Main.java.service.PostService;
 
@@ -43,22 +45,26 @@ public class DownloadServlet extends HttpServlet {
 
             // 응답 설정
             response.setContentType(getServletContext().getMimeType(file.getName()));
+            String encodedFileName = java.net.URLEncoder.encode(file.getName(), "UTF-8").replaceAll("\\+", "%20");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
             response.setContentLength((int) file.length());
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
 
             // 파일 전송
             try (FileInputStream fis = new FileInputStream(file);
+                 BufferedInputStream bis = new BufferedInputStream(fis);
                  OutputStream os = response.getOutputStream()) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
-                while ((bytesRead = fis.read(buffer)) != -1) {
+                while ((bytesRead = bis.read(buffer)) != -1) {
                     os.write(buffer, 0, bytesRead);
                 }
+                os.flush();
             } catch (IOException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "파일 다운로드 중 오류가 발생했습니다.");
             }
         } catch (NumberFormatException e) {
+            System.err.println("Invalid postId format: " + postIdParam); // 디버깅용 로그
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "게시물 ID는 숫자여야 합니다.");
         }
     }
