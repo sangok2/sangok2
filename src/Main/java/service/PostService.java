@@ -29,22 +29,32 @@ public class PostService {
     return author; // 작성자가 없으면 null 반환
     }
 
-    public Post getPostById(int postId) {
-        Post post = null;
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM posts WHERE post_id = ?")) {
-            
-            pstmt.setInt(1, postId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
+    // 게시물 가져오기
+    public Post getPostById(int postId, String userId) {
+    Post post = null;
+    String sql = "SELECT * FROM posts WHERE post_id = ?";
+    try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setInt(1, postId);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                String status = rs.getString("status");
+                String author = rs.getString("author");
+
+                // 비공개 게시물 접근 제한
+                if ("비공개".equals(status) && !(userId != null && (userId.equals(author) || "admin".equals(userId)))) {
+                    throw new RuntimeException("비공개 게시물에 대한 접근 권한이 없습니다.");
+                }
+
                     post = new Post(
                         rs.getInt("post_id"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("author"),
+                        author,
                         rs.getString("created_at"),
                         rs.getString("updated_at"),
-                        rs.getString("status"),
+                        status,
                         rs.getString("file_path")
                     );
                 }
@@ -206,8 +216,7 @@ public class PostService {
         List<Post> posts = new ArrayList<>();
         String sql = "SELECT * FROM posts WHERE "; 
 
-    // 검색 조건에 따른 SQL 쿼리        
-    // 검색 조건 설정
+    // 검색 조건에 따른 SQL 쿼리
     switch (condition) {
         case "제목":
             sql += "title LIKE ?";
@@ -244,6 +253,8 @@ public class PostService {
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
         int paramIndex = 1;
+
+        //검색 키워드 매핑
         switch (condition) {
             case "제목+내용":
             case "작성자+내용":

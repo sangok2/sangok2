@@ -99,6 +99,14 @@ public class CommentServlet extends HttpServlet {
 
         try {
             int commentId = Integer.parseInt(commentIdParam);
+    
+            // 작성자 본인 또는 admin 계정인지 확인
+            boolean isAuthorized = commentService.isAuthorizedToUpdate(commentId, userId);
+            if (!isAuthorized) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "댓글 수정 권한이 없습니다.");
+                return;
+            }
+    
             boolean success = commentService.updateComment(commentId, content, userId);
 
             if (success) {
@@ -125,8 +133,16 @@ public class CommentServlet extends HttpServlet {
         }
 
         try {
-            int commentId = Integer.parseInt(commentIdParam);
-            boolean success = commentService.deleteComment(commentId, userId);
+        int commentId = Integer.parseInt(commentIdParam);
+
+        // 작성자 본인 또는 admin 계정인지 확인
+        boolean isAuthorized = commentService.isAuthorizedToUpdate(commentId, userId);
+        if (!isAuthorized) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "댓글 삭제 권한이 없습니다.");
+            return;
+        }
+
+        boolean success = commentService.deleteComment(commentId, userId);
 
             if (success) {
                 System.out.println("댓글 삭제 성공: commentId=" + commentId + ", userId=" + userId);

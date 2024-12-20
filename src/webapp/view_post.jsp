@@ -7,20 +7,40 @@
 <%@ page import="java.util.List" %>
 
 <%
+    // 전달받은 게시물 ID 가져오기
+    int postId = Integer.parseInt(request.getParameter("postId"));
+    
     // 세션에서 로그인된 사용자 확인
     HttpSession sessionObj = request.getSession(false);
     String userId = (sessionObj != null) ? (String) sessionObj.getAttribute("userId") : null;
 
-    // 전달받은 게시물 ID 가져오기
-    int postId = Integer.parseInt(request.getParameter("postId"));
-
     // 게시물 및 댓글 데이터 가져오기
     PostService postService = new PostService();
-    Post post = postService.getPostById(postId);
+    Post post = null;
 
-    // 게시물이 없으면 목록 페이지로 이동
+    try {
+        post = postService.getPostById(postId, userId);
+    } catch (RuntimeException e) {
+        request.setAttribute("errorMessage", e.getMessage());
+    }
+
+    // 게시물이 없거나 접근 권한이 없으면 에러 메시지 표시 후 종료
     if (post == null) {
-        response.sendRedirect("post.jsp"); 
+        String errorMessage = (String) request.getAttribute("errorMessage");
+    %>
+    <!DOCTYPE html>
+    <html lang="ko">
+        <head>
+            <meta charset="UTF-8">
+        <title>오류</title>
+        </head>
+        <body>
+            <h2>오류</h2>
+            <p><%= errorMessage != null ? errorMessage : "존재하지 않는 게시물입니다." %></p>
+            <a href="post.jsp">목록으로 돌아가기</a>
+        </body>
+    </html>
+    <%
         return;
     }
 
@@ -114,7 +134,7 @@
                     
                 <!-- 댓글 수정/삭제 버튼 (작성자 본인만 표시) -->
                 <%
-                    if (userId != null && userId.equals(comment.getAuthor())) {
+                if (userId != null && (userId.equals(comment.getAuthor()) || "admin".equals(userId))) {
                 %>
                     <div class="actions">
                         <form action="<%= request.getContextPath() %>/CommentServlet" method="post" style="display:inline;">
